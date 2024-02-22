@@ -1,25 +1,22 @@
 package hei.school.sarisary.service;
 
 import hei.school.sarisary.repository.ImageTransformationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ImageTransformationService {
-  @Autowired
-  private final ImageTransformationRepository imageTransformationRepository;
+  @Autowired private final ImageTransformationRepository imageTransformationRepository;
 
   public ImageTransformationService(ImageTransformationRepository imageTransformationRepository) {
     this.imageTransformationRepository = imageTransformationRepository;
   }
 
-  public BufferedImage Grayscale(File imageToTransform) throws IOException {
+  public File Grayscale(File imageToTransform) throws IOException {
     // Read the image from the MultipartFile into a BufferedImage
     BufferedImage img = ImageIO.read(imageToTransform);
     int width = img.getWidth();
@@ -36,6 +33,8 @@ public class ImageTransformationService {
         grayscaleImage.setRGB(i, j, (gray << 16) | (gray << 8) | gray);
       }
     }
-    return grayscaleImage;
+    File grayscaleFile = File.createTempFile("grayscale-", ".png");
+    ImageIO.write(grayscaleImage, "png", grayscaleFile);
+    return grayscaleFile;
   }
 }
